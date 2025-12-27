@@ -13,6 +13,7 @@ const genericScraper = async(inputFile, outputDir, buildUrl, extension) => {
         for (const raw of items) {
             const clean = raw.trim();
             if(!clean) continue;
+
             const url = buildUrl(clean);
             const filePath = path.join(outputDir, `${clean}${extension}`);
 
