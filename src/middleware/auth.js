@@ -1,0 +1,42 @@
+const jwt = require('jsonwebtoken');
+const config = require('../config/index');
+const User = require('../models/User');
+
+// Saioa hasita dagoen egiaztatzeko (Token bidez)
+exports.protect = async (req, res, next) => {
+    let token;
+
+    if(req.cookies && req.cookies.token) {
+        token = req.cookies.token;
+    }
+
+    if(!token && req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
+        token = req.headers.authorization.split(' ')[1];
+    }
+
+    if(!token) {
+        return res.status(401).json({success: false, message: 'Tokena falta da'});
+    }
+
+    try{
+        const decoded = jwt.verify(token, config.jwtSecret);
+        req.user=await User.findById(decoded.id).select('-password');
+        next();
+    }catch(error) {
+        return res.status(401).json({success: false, message: 'Token baliogabea'});
+    }
+};
+
+
+// Admin dela egiaztatzeko
+exports.authorize = (...roles) => {
+    return (req, res, next) => {
+        if (!roles.includes(req.user.role)) {
+            return res.status(403).json({
+                success: false,
+                message: `User role ${req.user.role} is not authorized to access this route`
+            });
+        }
+        next();
+    };
+};
