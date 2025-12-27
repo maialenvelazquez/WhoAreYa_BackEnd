@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="eu">
+<head>
+    <meta charset="UTF-8">
+    <title>Jokalaria editatu</title>
+    <link rel="stylesheet" href="/css/admin.css">
+</head>
+
+<body>
+<h1>Jokalaria editatu</h1>
+
+<a href="/admin">
+    <button>Itzuli zerrendara</button>
+</a>
+
+<form id="editPlayer">
+    <label>Izena</label>
+    <input type="text" id="name" required>
+
+    <label>Taldea</label>
+    <input type="text" id="team" required>
+
+    <label>Posizioa</label>
+    <input type="text" id="position" required>
+
+    <button type="submit">Gorde aldaketak</button>
+</form>
+
+<script>
+    const playerId = <%=playerId%>;
+
+    async function loadPlayer(){
+        try{
+            const res = await fetch(`/api/players/${playerId}`);
+            const player = await res.json();
+
+            document.getElementById("name").value = player.name;
+            document.getElementById("team").value = player.team;
+            document.getElementById("position").value = player.position;
+        }catch(error) {
+            console.error("Errorea jokalaria kargatzerakoan", error);
+        }
+    }
+
+    document.getElementById("editPlayer").addEventListener("submit", async(e)=>{
+        e.preventDefault();
+
+        const updatePlayer = {
+            name: document.getElementById("name").value,
+            team: document.getElementById("team").value,
+            position: document.getElementById("position").value
+        };
+
+        try{
+            const res = await fetch(`/api/players/${playerId}`, {
+                method: 'PUT',
+                headers: {"Content-Type": "application/json"},
+                body: JSON.stringify(updatePlayer)
+            });
+
+            if (res.ok) {
+                alert("Jokalaria editatu da");
+                window.location.href = "/admin";
+            }else{
+                alert("Errorea jokalaria editatzerakoan");
+            }
+        }catch(error) {
+            console.error("Errorea jokalaria editatzerakoan", error);
+        }
+    });
+
+    loadPlayer();
+</script>
+</body>
+</html>

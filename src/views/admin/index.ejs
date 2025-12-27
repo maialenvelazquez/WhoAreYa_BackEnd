@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="eu">
+<head>
+    <meta charset="UTF-8">
+    <title>Jokalarien kudeaketa</title>
+    <link rel="stylesheet" href="/css/admin.css">
+</head>
+
+<body>
+<h1>Jokalariaren administrazioa</h1>
+
+<a href="/admin/players/new">
+    <button>Jokalari berria sortu</button>
+</a>
+
+<h2>Jokalarien zerrenda</h2>
+
+<table border="1" cellpadding="8">
+    <thead>
+    <tr>
+        <th>Izena</th>
+        <th>Taldea</th>
+        <th>Posizioa</th>
+        <th>Ekintzak</th>
+    </tr>
+    </thead>
+
+    <tbody id="playersTable">
+    </tbody>
+</table>
+
+<script>
+    async function loadPlayers() {
+        try{
+            const res = await fetch('/api/players');
+            const players = await res.json();
+
+            const tbody = document.getElementById('playersTable');
+            tbody.innerHTML = '';
+
+            players.forEach(player => {
+                const row = document.createElement('tr');
+
+                row.innerHTML = `
+                    <td>${player.name}</td>
+                    <td>${player.team}</td>
+                    <td>${player.position}</td>
+                    <td>
+                        <a href = "/admin/players/edit/${player._id}">
+                            <button>Editatu</button>
+                        </a>
+                        <button onclick="deletePlayer('${player._id}')">Ezabatu</button>
+                    </td>`;
+
+                    tbody.appendChild(row);
+            });
+        }catch(error) {
+            console.error("Errorea jokalariak kargatzerakoan", error);
+        }
+    }
+
+    async function deletePlayer(id) {
+        const confirmDelete = confirm("Ziur zaude jokalari hau ezabatu nahi duzula?");
+        if (!confirmDelete) return;
+
+        try{
+            const res = await fetch(`/api/players/${id}`, {
+                method: 'DELETE'
+            });
+
+            if (res.ok) {
+                alert("Jokalaria ezabatu da");
+                loadPlayers();
+            }else{
+                alert("Errorea ezabatzerakoan");
+            }
+        }catch(error) {
+            console.error("Errorea ezabatzerakoan", error);
+        }
+    }
+ loadPlayers();
+</script>
+</body>
+</html>
+
+
+
+
