@@ -7,52 +7,52 @@
 </head>
 
 <body>
-<h1>Jokalaria sortu</h1>
+    <h1>Jokalaria sortu</h1>
 
-<a href="/admin">
-    <button>Itzuli zerrendara</button>
-</a>
+    <a href="/admin">
+        <button>Itzuli zerrendara</button>
+    </a>
 
-<form id="createPlayer">
-    <label>Izena</label>
-    <input type="text" id="name" required>
+    <form id="createPlayer">
+        <label>Izena</label>
+        <input type="text" id="name" required>
 
-    <label>Taldea</label>
-    <input type="text" id="team" required>
+        <label>Taldea</label>
+        <input type="text" id="team" required>
 
-    <label>Posizioa</label>
-    <input type="text" id="position" required>
+        <label>Posizioa</label>
+        <input type="text" id="position" required>
 
-    <button type="submit">Jokalaria sortu</button>
-</form>
+        <button type="submit">Jokalaria sortu</button>
+    </form>
 
-<script>
-    document.getElementById("createPlayer").addEventListener("submit", async (e)=>{
-        e.preventDefault();
+    <script>
+        document.getElementById("createPlayer").addEventListener("submit", async (e)=>{
+            e.preventDefault();
 
-        const newPlayer = {
-           name: document.getElementById("name").value,
-           team: document.getElementById("team").value,
-           position: document.getElementById("position").value
-        };
+            const newPlayer = {
+               name: document.getElementById("name").value,
+               team: document.getElementById("team").value,
+               position: document.getElementById("position").value
+            };
 
-        try{
-            const res = await fetch('/api/players', {
-                method: 'POST',
-                headers: {"Content-Type": "application/json"},
-                body: JSON.stringify(newPlayer)
-            });
+            try{
+                const res = await fetch('/api/players', {
+                    method: 'POST',
+                    headers: {"Content-Type": "application/json"},
+                    body: JSON.stringify(newPlayer)
+                });
 
-            if(res.ok) {
-                alert("Jokalaria srotu da");
-                window.location.href = "/admin";
-            }else{
-                alert("Errorea jokalaria sortzerakoan");
+                if(res.ok) {
+                    alert("Jokalaria srotu da");
+                    window.location.href = "/admin";
+                }else{
+                    alert("Errorea jokalaria sortzerakoan");
+                }
+            }catch(error){
+                console.error("Errorea jokalaria sortzerakoan", error);
             }
-        }catch(error){
-            console.error("Errorea jokalaria sortzerakoan", error);
-        }
-    });
-</script>
+        });
+    </script>
 </body>
 </html>
