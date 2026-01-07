@@ -2,20 +2,15 @@ const User = require('../models/User');
 const jwt = require('jsonwebtoken');
 const config = require('../config/index');
 
-// Tokena sortzeko funtzio laguntzailea
 const generateToken = (id, role) => {
     return jwt.sign({ id, role }, config.jwtSecret, {
         expiresIn: '30d' // Tokenak 30 egun iraungo du
     });
 };
 
-// @desc    Erabiltzaile berria erregistratu
-// @route   POST /api/auth/register
 exports.register = async (req, res) => {
     try {
         const { name, lastName, email, password } = req.body;
-
-        //Egiaztatu datu guztiak jaso direla
         if(!name || !lastName || !email || !password) {
             return res.status(400).json({
                 success: false,
@@ -23,17 +18,14 @@ exports.register = async (req, res) => {
             });
         }
 
-        // Egiaztatu ea existitzen den
         const userExists = await User.findOne({ email });
         if (userExists) {
             return res.status(400).json({ success: false, message: 'Email hori erregistratuta dago jada.' });
         }
 
-        // Lehenengo erabiltzailea bada -> ADMIN, bestela -> USER
         const isFirstAccount = (await User.countDocuments({})) === 0;
         const role = isFirstAccount ? 'admin' : 'user';
 
-        // Erabiltzailea sortu
         const user = await User.create({
             name,
             lastName,
@@ -42,7 +34,6 @@ exports.register = async (req, res) => {
             role
         });
 
-        //Tokena sortu
         const token = generateToken(user._id, user.role);
 
         res.cookie("token", token, {
@@ -70,13 +61,10 @@ exports.register = async (req, res) => {
     }
 };
 
-// @desc    Saioa hasi (Login)
-// @route   POST /api/auth/login
 exports.login = async (req, res) => {
     try {
         const { email, password } = req.body;
 
-        //Datuak egiaztatu
         if(!email || !password){
             return res.status(400).json({
                 success: false,
@@ -84,7 +72,6 @@ exports.login = async (req, res) => {
             });
         }
 
-        // Erabiltzailea bilatu
         const user = await User.findOne({ email });
         if(!user){
             return res.status(401).json({
@@ -93,7 +80,6 @@ exports.login = async (req, res) => {
             });
         }
 
-        // Erabiltzailea existitzen den eta pasahitza ondo dagoen egiaztatu
         const batDator = await user.matchPassword(password);
         if (!batDator) {
             return res.status(401).json({
@@ -102,7 +88,6 @@ exports.login = async (req, res) => {
             });
         }
 
-        //Tokena sortu
         const token = generateToken(user._id, user.role);
 
         res.cookie("token", token, {

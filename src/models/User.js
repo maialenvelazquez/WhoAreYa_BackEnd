@@ -13,16 +13,13 @@ const UserSchema = new mongoose.Schema({
     }
 });
 
-// Gorde aurretik pasahitza zifratu
 UserSchema.pre('save', async function() {
-    // 'next' parametroa kendu dugu parentesietatik eta kode barrutik
     if (!this.isModified('password')) return;
 
     const salt = await bcrypt.genSalt(10);
     this.password = await bcrypt.hash(this.password, salt);
 });
 
-// Pasahitza konparatzeko metodoa (Loginean erabiltzeko)
 UserSchema.methods.matchPassword = async function(enteredPassword) {
     return await bcrypt.compare(enteredPassword, this.password);
 };

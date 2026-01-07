@@ -45,7 +45,7 @@ function getSolution(players, solutionArray, difference_In_Days) {
     return jokalaria;
 }
 
-// JSON-ak kargatu eta jokalaria ezarri
+
 Promise.all([
     fetchJSON("json/fullplayers25.json"),
     fetchJSON("json/solution25.json")
@@ -58,7 +58,6 @@ Promise.all([
             `https://playfootball.games/media/players/${game.solution.id % 32}/${game.solution.id}.png`;
 
         const previous = loadPreviousGame(game.solution.id);
-        // addRow funtzioa sortu bakarrik jokalaria existitzen bada
         window.addRow = setupRows(game);
         const input = document.getElementById("myInput");
         autocomplete(input, game);
@@ -68,7 +67,6 @@ Promise.all([
         }
 });
 
-// input event
 document.getElementById("myInput").addEventListener("keydown", function(event) {
     if (event.key === "Enter") {
         const JokalariarenID = parseInt(event.target.value);

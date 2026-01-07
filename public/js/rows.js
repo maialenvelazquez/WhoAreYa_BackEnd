@@ -1,8 +1,7 @@
 import { folder, leftArrow, higher, lower, stringToHTML } from "./fragments.js";
 
-// rows.js fitxategiaren hasieran:
 
-import { initState, updateStats } from './stats.js'; // <--- updateStats GEHITU HEMEN
+import { initState, updateStats } from './stats.js';
 import { stats, headless, toggle } from './fragments.js';
 
 const delay = 350;
@@ -21,10 +20,8 @@ export function getPlayer(game, playerId) {
 }
 
 export function setupRows(game) {
-
-    // ⭐ M4: initState gehitua
     let [state, updateState] = initState('WAYgameState', game.solution.id);
-    // Game objektua sinkronizatu
+
     game.guesses = state.guesses;
     
     function leagueToFlag(leagueId) {
@@ -67,7 +64,7 @@ export function setupRows(game) {
         return (jokalariMisteriotsua[theKey] === theValue) ? "correct" : "incorrect";
     }
 
-    // ⭐ M4: UNBLUR FUNTZIOA TXERTATUA [cite: 499]
+
     function unblur(outcome) {
         return new Promise( (resolve, reject) =>  {
             setTimeout(() => {
@@ -106,7 +103,7 @@ export function setupRows(game) {
         }
     }
 
-    // ⭐ M4: success eta gameOver funtzioak unblur erabiltzeko [cite: 500, 501]
+
     function success() {
         unblur('success');
         showStats(2500);
@@ -117,14 +114,12 @@ export function setupRows(game) {
         showStats(2500);
     }
 
-    // ⭐ M4: resetInput eguneratua placeholder-a aldatzeko
     function resetInput() {
         let input = document.getElementById("myInput");
         if (!input) return;
 
         input.value = "";
 
-        // "Guess X of 8" kalkulatu
         let nextGuess = game.guesses.length + 1;
         if(nextGuess <= 8) {
             input.placeholder = "Guess " + nextGuess + " of 8";
@@ -135,7 +130,7 @@ export function setupRows(game) {
         input.focus();
     }
 
-    // ⭐ M4: gameEnded
+
     function gameEnded(lastGuess) {
         if (lastGuess === game.solution.id) return true;
         if (game.guesses.length >= 8) return true;
@@ -191,33 +186,33 @@ export function setupRows(game) {
         document.getElementById('players').prepend(stringToHTML(child));
     }
 
-    // Hasieran inputa prestatu
+
     resetInput();
 
     let tick = function () {
         let now = new Date();
         let tomorrow = new Date(now);
-        tomorrow.setHours(24, 0, 0, 0); // Hurrengo gauerdia
+        tomorrow.setHours(24, 0, 0, 0);
 
-        let diff = tomorrow - now; // Diferentzia milisegundotan
+        let diff = tomorrow - now;
 
-        // Kalkulatu orduak, minutuak eta segunduak
+
         let hours = Math.floor(diff / (1000 * 60 * 60));
         let minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
         let seconds = Math.floor((diff % (1000 * 60)) / 1000);
 
-        // Formateatu (09:05:01 itxura izateko)
+
         let h = hours.toString().padStart(2, "0");
         let m = minutes.toString().padStart(2, "0");
         let s = seconds.toString().padStart(2, "0");
 
-        // HTML-a eguneratu
+
         let element = document.getElementById("nextPlayer");
         if (element) {
             element.innerHTML = `${h}:${m}:${s}`;
         }
     };
-    // Itzuliko den funtzioa (main.js-ko addRow)
+
     return function addRow(playerId) {
 
         let guess = getPlayer(game, playerId);
@@ -225,15 +220,13 @@ export function setupRows(game) {
 
         let content = setContent(guess);
 
-        // ⭐ M4 — Estatistikak gordetzen dira
-        // Ziurtatu ez dugula bikoizten (updateState-k ere gehitzen du batzuetan inplementazioaren arabera,
-        // baina hemen seguru jokatzeko arraya eta localStorage sinkronizatzen dira)
+
         
         if (!game.guesses.includes(playerId)) {
             updateState(playerId);
         }
 
-        // Inputa garbitu eta placeholder eguneratu
+
         resetInput();
 
         if (gameEnded(playerId)) {

@@ -16,12 +16,8 @@ const downloadTeams = async () => {
         for (const idStr of teamIds) {
             const teamId = parseInt(idStr.trim());
             if (!teamId) continue;
-
-            // FORMULA MAGIKOA [cite: 206-210]
-            // Karpeta zenbakia kalkulatu: ID % 32
             const folder = teamId % 32;
 
-            // URL-a osatu
             const url = `https://cdn.sportmonks.com/images/soccer/teams/${folder}/${teamId}.png`;
             const filePath = path.join(writePath, `${teamId}.png`);
 

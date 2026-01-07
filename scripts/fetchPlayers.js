@@ -4,7 +4,6 @@ const path = require('path');
 const fetch = require('node-fetch');
 const pLimit = require('p-limit').default;
 
-// Muga 5era jaitsi dugu blokeoak saihesteko
 const CONCURRENCY_LIMIT = 5;
 
 const downloadPlayers = async () => {
@@ -30,7 +29,6 @@ const downloadPlayers = async () => {
                 if (fs.existsSync(filePath)) return;
 
                 try {
-                    // Headers objektua gehituta:
                     const res = await fetch(url, {
                         headers: {
                             'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
@@ -42,11 +40,8 @@ const downloadPlayers = async () => {
                     if (res.ok) {
                         const dest = fs.createWriteStream(filePath);
                         res.body.pipe(dest);
-                        // Aukerazkoa: log gutxiago ikusteko
                         console.log(`✅ ${playerId}`);
                     } else {
-                        // 404 bada, irudia ez da existitzen (normala izan daiteke batzuetan)
-                        // 403 bada, oraindik blokeatzen gaitu
                         console.log(`❌ Errorea ${playerId}: ${res.status}`);
                     }
                 } catch (err) {

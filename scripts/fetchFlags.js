@@ -4,15 +4,12 @@ const path = require('path');
 const fetch = require('node-fetch');
 
 const downloadFlags = async () => {
-    // 1. Bideak definitu
     const readPath = path.join(__dirname, '../nationalities.txt');
     const writePath = path.join(__dirname, '../public/images/nations/');
 
     try {
-        // Karpeta sortu
         await fsPromises.mkdir(writePath, { recursive: true });
 
-        // Fitxategia irakurri
         const content = await fsPromises.readFile(readPath, "utf8");
         const nations = content.split("\n");
 
@@ -20,14 +17,10 @@ const downloadFlags = async () => {
             const cleanNation = nation.trim();
             if (!cleanNation) continue;
 
-            // 2. URL Encoding: Espazioak eta karaktere bereziak kudeatu [cite: 196]
-            // encodeURIComponent funtzioak espazioak %20 bihurtzen ditu automatikoki
             const encodedNation = encodeURIComponent(cleanNation);
 
-            // Banderak .svg formatuan daude [cite: 191]
             const url = `https://playfootball.games/media/nations/${encodedNation}.svg`;
 
-            // Fitxategiaren izena jatorrizkoa mantenduko dugu diskorako
             const filePath = path.join(writePath, `${cleanNation}.svg`);
 
             try {
