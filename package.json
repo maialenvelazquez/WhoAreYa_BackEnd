@@ -35,5 +35,9 @@
   "scripts": {
     "start": "node src/server.js",
     "test": "jest --runInBand"
+  },
+  "scripts": {
+    "start": "node server.js",
+    "dev": "npx nodemon server.js"
   }
 }
